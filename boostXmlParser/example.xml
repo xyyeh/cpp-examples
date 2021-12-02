@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<!-- <purchaseOrder>
+    <Node Type="XET" Reference="10110232">
+        <Test TestType="123" />
+    </Node>
+</purchaseOrder> -->
+
+<link name="base_link">
+    <visual>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+            <mesh filename="package://description/meshes/base_link.stl" />
+        </geometry>
+    </visual>
+</link>
