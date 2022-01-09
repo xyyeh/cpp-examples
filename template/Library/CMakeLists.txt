@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 3.1.3)
-project(DifferentiablePathSegment)
+project(Library)
 
 add_library(${PROJECT_NAME} STATIC
-    inc/DifferentiablePathSegment/DifferentiablePathSegment.hpp
-    src/DifferentiablePathSegment.cpp
+    inc/Library/Library.hpp
+    src/Library.cpp
     )
 
 target_include_directories(${PROJECT_NAME}

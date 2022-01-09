@@ -1,7 +1,6 @@
-#include "DifferentiablePathSegment/DifferentiablePathSegment.hpp"
+#include "Library/Library.hpp"
 
-void DifferentiablePathSegment::initialize(unsigned int nWaypoints,
-                                           unsigned int nDof) {
+void Library::initialize(unsigned int nWaypoints, unsigned int nDof) {
   // assign
   m_numWayPoints = nWaypoints;
   m_numDof = nDof;
@@ -12,7 +11,7 @@ void DifferentiablePathSegment::initialize(unsigned int nWaypoints,
   m_sNorm.resize(m_numWayPoints);
 }
 
-void DifferentiablePathSegment::interpolate() {
+void Library::interpolate() {
   // compute norm of segments
   for (unsigned int i = 0; i < m_numWayPoints; i++) {
     m_sNorm(i) = m_pS.row(i).norm();

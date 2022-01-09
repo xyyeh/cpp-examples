@@ -3,7 +3,7 @@
 
 #include <Eigen/Dense>
 
-class DifferentiablePathSegment {
+class Library {
 private:
   /** p(s) */
   Eigen::MatrixXd m_pS;
@@ -14,8 +14,8 @@ private:
   unsigned int m_numDof = 0;
 
 public:
-  DifferentiablePathSegment() = default;
-  virtual ~DifferentiablePathSegment(){};
+  Library() = default;
+  virtual ~Library(){};
 
   /**
    * @brief Initialize dimensions of path vector
