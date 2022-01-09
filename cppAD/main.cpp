@@ -49,6 +49,8 @@ int main(void) {
   x[0] = 3.;                 // argument value for computing derivative
   jac = f.Jacobian(x);       // Jacobian for operation sequence
 
+  auto aa = f.Jacobian(x);
+
   // print the results
   std::cout << "f'(3) computed by CppAD = " << jac[0] << std::endl;
 
