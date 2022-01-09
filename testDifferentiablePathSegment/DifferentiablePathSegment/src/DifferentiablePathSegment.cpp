@@ -18,3 +18,8 @@ void DifferentiablePathSegment::interpolate() {
     m_sNorm(i) = m_pS.row(i).norm();
   }
 }
+
+void DifferentiablePathSegment::insertNode(unsigned int i,
+                                           const Eigen::VectorXd &q) {
+  m_pS.row(i) = q;
+}

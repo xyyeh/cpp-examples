@@ -24,6 +24,8 @@ public:
    */
   void initialize(unsigned int nWaypoints, unsigned int nDof);
 
+  void insertNode(unsigned int i, const Eigen::VectorXd &q);
+
   void interpolate();
 
   // void insertSegmentNode(const VectorXd )

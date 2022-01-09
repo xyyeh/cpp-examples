@@ -1,8 +1,7 @@
-#include <iostream>
-
 #include <boost/foreach.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
+#include <iostream>
 #include <set>
 
 const std::string xmlPath = "../example.xml";
@@ -18,8 +17,7 @@ int main() {
   pt::ptree propertyTree;
   pt::read_xml(xmlPath, propertyTree);
 
-  BOOST_FOREACH (boost::property_tree::ptree::value_type &v,
-                 propertyTree.get_child("link")) {
+  BOOST_FOREACH (boost::property_tree::ptree::value_type &v, propertyTree.get_child("link")) {
     std::cout << v.first << std::endl;
 
     if (v.first == "<xmlattr>") {
