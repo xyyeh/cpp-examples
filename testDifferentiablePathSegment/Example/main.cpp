@@ -14,7 +14,7 @@ int main() {
   ds.insertNode(0, q);
   q << 1, 3, 5, 7, 9, 10, 12;
   ds.insertNode(1, q);
-  q << 1, 2, 3, 2, 5, 3, 7;
+  q << 1, 2, 3, 2, 5, 13, 7;
   ds.insertNode(2, q);
 
   // setup path
