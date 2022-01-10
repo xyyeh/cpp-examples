@@ -63,8 +63,8 @@ void DifferentiablePathSegment::evaluateDpds(double s, Eigen::VectorXd& dpds) {
   Eigen::VectorXd pMinusEps(m_numDof);
   Eigen::VectorXd pPlusEps(m_numDof);
 
-  double sMinusEps = std::min(0.0, s - kFiniteDiffEps);
-  double sPlusEps = std::max(s + kFiniteDiffEps, m_sCumulativeSum(m_numWayPoints - 1));
+  double sMinusEps = std::max(0.0, s - kFiniteDiffEps);
+  double sPlusEps = std::min(s + kFiniteDiffEps, m_sCumulativeSum(m_numWayPoints - 1));
 
   evaluatePs(sMinusEps, pMinusEps);
   evaluatePs(sPlusEps, pPlusEps);
