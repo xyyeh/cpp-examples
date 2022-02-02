@@ -5,7 +5,10 @@ project(boost_graph)
 SET(CMAKE_CXX_FLAGS "-O3")
 
 # create executable from source
-add_executable(${PROJECT_NAME} main.cpp DynamicRoadmapBoost.cpp)
+add_executable(${PROJECT_NAME} 
+    main.cpp 
+    DynamicRoadmapBoost.cpp
+    DynamicRoadmapCustom.cpp)
 
 # find all packages
 find_package(Boost 1.71 COMPONENTS program_options graph REQUIRED)

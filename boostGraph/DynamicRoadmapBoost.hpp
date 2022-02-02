@@ -72,9 +72,6 @@ private:
   std::vector<std::pair<uint8_t, uint>> findNeighbors(const std::pair<uint8_t, uint>& node);
   bool isConfigurationValid(const std::vector<uint>& configuration);
 
-public:
-  DynamicRoadmapBoost();
-
   /** Max indices at every level of hierarchical indices */
   std::vector<uint8_t> m_K;
 
@@ -83,6 +80,9 @@ public:
 
   /** Graph */
   Graph m_graph;
+
+public:
+  DynamicRoadmapBoost();
 
   /**
    * @brief Solve the path planning problem using AStar search
