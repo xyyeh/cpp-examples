@@ -8,7 +8,7 @@
 #include <iostream>
 #include <sstream>
 
-DynamicRoadmap::DynamicRoadmap() {
+DynamicRoadmapBoost::DynamicRoadmapBoost() {
   // calculate the deltas and the K
   for (uint i = 0; i < k_dof; i++) {
     // double deltaN = (1 + (sqrt(2) * k_linkWidth)) / ((k_dof - i) * k_linkLength);
@@ -91,7 +91,7 @@ DynamicRoadmap::DynamicRoadmap() {
   // }
 }
 
-std::pair<uint8_t, uint> DynamicRoadmap::getIndexFromHierarchicalConfiguration(const std::vector<uint8_t>& k) {
+std::pair<uint8_t, uint> DynamicRoadmapBoost::getIndexFromHierarchicalConfiguration(const std::vector<uint8_t>& k) {
   uint i = k[0];
   uint8_t n = k.size();
 
@@ -102,7 +102,7 @@ std::pair<uint8_t, uint> DynamicRoadmap::getIndexFromHierarchicalConfiguration(c
   return std::make_pair(n, i);
 }
 
-std::vector<uint8_t> DynamicRoadmap::getHierarchicalConfigurationFromIndex(uint i) {
+std::vector<uint8_t> DynamicRoadmapBoost::getHierarchicalConfigurationFromIndex(uint i) {
   std::vector<uint8_t> k(k_dof, 0);
   for (int j = k_dof - 1; j > -1; j--) {
     auto div_res = std::div((int)i, (int)m_K[j]);
@@ -119,7 +119,7 @@ std::vector<uint8_t> DynamicRoadmap::getHierarchicalConfigurationFromIndex(uint 
   return k;
 }
 
-std::vector<uint8_t> DynamicRoadmap::getHierarchicalConfigurationFromIndex(const std::pair<uint8_t, uint>& n_i) {
+std::vector<uint8_t> DynamicRoadmapBoost::getHierarchicalConfigurationFromIndex(const std::pair<uint8_t, uint>& n_i) {
   uint8_t n = n_i.first;
   uint i = n_i.second;
 
@@ -139,7 +139,7 @@ std::vector<uint8_t> DynamicRoadmap::getHierarchicalConfigurationFromIndex(const
   return k;
 }
 
-std::vector<std::pair<uint8_t, uint>> DynamicRoadmap::findNeighbors(const std::pair<uint8_t, uint>& node) {
+std::vector<std::pair<uint8_t, uint>> DynamicRoadmapBoost::findNeighbors(const std::pair<uint8_t, uint>& node) {
   // storage for neighbors
   std::vector<std::pair<uint8_t, uint>> neighbors;
 
@@ -164,8 +164,8 @@ std::vector<std::pair<uint8_t, uint>> DynamicRoadmap::findNeighbors(const std::p
   return neighbors;
 }
 
-int DynamicRoadmap::solve(uint start, uint goal, double subOptimalGain,
-                          const std::unordered_set<uint>& occupiedVertices, std::vector<uint>& path) {
+int DynamicRoadmapBoost::solve(uint start, uint goal, double subOptimalGain,
+                               const std::unordered_set<uint>& occupiedVertices, std::vector<uint>& path) {
   path.clear();
 
   auto start_remove_vertices = std::chrono::high_resolution_clock::now();
@@ -255,7 +255,7 @@ int DynamicRoadmap::solve(uint start, uint goal, double subOptimalGain,
   return path.size();
 }
 
-bool DynamicRoadmap::isConfigurationValid(const std::vector<uint>& configuration) {
+bool DynamicRoadmapBoost::isConfigurationValid(const std::vector<uint>& configuration) {
   // Check if the configuration is in self-collision, or is in collision with
   // a static obstacle
   // TODO

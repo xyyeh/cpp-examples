@@ -11,7 +11,7 @@
 
 int main() {
   // Definition of graph
-  DynamicRoadmap drm;
+  DynamicRoadmapBoost drm;
 
   // Occupied vertices
   std::unordered_set<uint> occupiedVertices{1, 2};

@@ -31,7 +31,7 @@ private:
   V goal_;
 };
 
-class DynamicRoadmap {
+class DynamicRoadmapBoost {
   /** @brief Property definition for the vertex. */
   struct vertex_info {
     uint index;
@@ -75,7 +75,7 @@ private:
   bool isConfigurationValid(const std::vector<uint>& configuration);
 
 public:
-  DynamicRoadmap();
+  DynamicRoadmapBoost();
 
   /** Max indices at every level of hierarchical indices */
   std::vector<uint8_t> m_K;
