@@ -10,8 +10,6 @@
 #include <unordered_set>
 #include <vector>
 
-constexpr uint8_t k_dof = 6;
-
 struct AStarFoundGoal {};  // exception for termination
 
 // visitor that terminates when we find the goal

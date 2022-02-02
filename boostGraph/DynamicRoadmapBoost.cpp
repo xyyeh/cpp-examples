@@ -8,6 +8,10 @@
 #include <iostream>
 #include <sstream>
 
+namespace {
+constexpr uint8_t k_dof = 6;
+};
+
 DynamicRoadmapBoost::DynamicRoadmapBoost() {
   // calculate the deltas and the K
   for (uint i = 0; i < k_dof; i++) {
