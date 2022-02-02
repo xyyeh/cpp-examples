@@ -7,7 +7,7 @@
 #include <iostream>
 #include <nlohmann/json.hpp>
 
-#include "DynamicRoadmap.hpp"
+#include "DynamicRoadmapBoost.hpp"
 
 int main() {
   // Definition of graph
