@@ -22,16 +22,16 @@ int main(int argc, char* argv[]) {
 
   // clang-format off
   Eigen::Vector3d vec;
-  vec << std::stod(std::string(jsonTags["bTc"]["pos"]["x"])), 
-         std::stod(std::string(jsonTags["bTc"]["pos"]["y"])),
-         std::stod(std::string(jsonTags["bTc"]["pos"]["z"]));
+  vec << (jsonTags["bTc"]["pos"]["x"]),
+         (jsonTags["bTc"]["pos"]["y"]),
+         (jsonTags["bTc"]["pos"]["z"]);
   // clang-format on
 
   // clang-format off
-  Eigen::Quaterniond q(std::stod(std::string(jsonTags["bTc"]["quat"]["w"])), 
-                       std::stod(std::string(jsonTags["bTc"]["quat"]["x"])), 
-                       std::stod(std::string(jsonTags["bTc"]["quat"]["y"])), 
-                       std::stod(std::string(jsonTags["bTc"]["quat"]["z"])));
+  Eigen::Quaterniond q((jsonTags["bTc"]["quat"]["w"]),
+                       (jsonTags["bTc"]["quat"]["x"]),
+                       (jsonTags["bTc"]["quat"]["y"]),
+                       (jsonTags["bTc"]["quat"]["z"]));
   // clang-format on
 
   std::cout << "bTc.p = \n" << vec.transpose() << std::endl;
