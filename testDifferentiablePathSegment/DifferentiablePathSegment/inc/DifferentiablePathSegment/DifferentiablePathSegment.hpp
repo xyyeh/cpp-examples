@@ -1,7 +1,7 @@
 #ifndef FDA7ED16_E8A3_4AD9_83BA_4AF3225B5AD8
 #define FDA7ED16_E8A3_4AD9_83BA_4AF3225B5AD8
 
-#include <Eigen/Dense>
+#include <Eigen/Eigen>
 #include <iostream>
 
 class DifferentiablePathSegment {
