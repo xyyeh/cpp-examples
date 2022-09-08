@@ -1,41 +1,129 @@
-// A simple introductory program; its main window contains a static picture
-// of a series of points
 
+#include <GL/glu.h>
 #include <GL/glut.h>
+#include <math.h>
+#include <stdlib.h>
+#include <unistd.h>
 
-// Clears the current window and draws a bunch of points.
-void display() {
-  glPointSize(10);
+#include <iostream>
+
+// angle of rotation for the camera direction
+float angle = 0.0;
+// actual vector representing the camera's direction
+float lx = 0.0f, lz = -1.0f;
+// XZ position of the camera
+float x = 0.0f, z = 5.0f;
+
+void drawObject() {
+  glPointSize(5);
   glBegin(GL_POINTS);
-  for (unsigned int i = 0; i < 10; i++) {
-    glColor3f(0, 0.1 * i, 0);
-    glVertex3d(0, 0.1 * i, 0);
+  for (unsigned int i = 0; i < 30; i++) {
+    float x = (rand() % 100 - 50) / 100.0;
+    float y = (rand() % 100 - 50) / 100.0;
+    float z = (rand() % 100 - 50) / 100.0;
+    glColor3f(x, y, z);
+    glVertex3f(x, y, z);
   }
   glEnd();
-
-  // Flush drawing command buffer to make drawing happen as soon as possible.
-  glFlush();
 }
 
-// Initializes GLUT, the display mode, and main window; registers callbacks;
-// enters the main event loop.
-int main(int argc, char** argv) {
-  // Use a single buffered window in RGB mode (as opposed to a double-buffered
-  // window or color-index mode).
+void renderScene(void) {
+  // Clear Color and Depth Buffers
+
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+  // Reset transformations
+  glLoadIdentity();
+  // Set the camera
+  gluLookAt(x, 1.0f, z, x + lx, 1.0f, z + lz, 0.0f, 1.0f, 0.0f);
+
+  // Draw ground
+  glColor4f(0.9f, 0.9f, 0.9f, 0.1f);
+  glBegin(GL_QUADS);
+  glVertex3f(-100.0f, 0.0f, -100.0f);
+  glVertex3f(-100.0f, 0.0f, 100.0f);
+  glVertex3f(100.0f, 0.0f, 100.0f);
+  glVertex3f(100.0f, 0.0f, -100.0f);
+  glEnd();
+
+  // Draw object
+  drawObject();
+
+  glutSwapBuffers();
+}
+
+void changeSize(int w, int h) {
+  // Prevent a divide by zero, when window is too short
+  // (you cant make a window of zero width).
+  if (h == 0) h = 1;
+  float ratio = w * 1.0 / h;
+
+  // Use the Projection Matrix
+  glMatrixMode(GL_PROJECTION);
+
+  // Reset Matrix
+  glLoadIdentity();
+
+  // Set the viewport to be the entire window
+  glViewport(0, 0, w, h);
+
+  // Set the correct perspective.
+  gluPerspective(45.0f, ratio, 0.1f, 100.0f);
+
+  // Get Back to the Modelview
+  glMatrixMode(GL_MODELVIEW);
+}
+
+void processNormalKeys(unsigned char key, int x, int y) {
+  if (key == 27) exit(0);
+}
+
+void processSpecialKeys(int key, int xx, int yy) {
+  float fraction = 0.5f;
+
+  switch (key) {
+    case GLUT_KEY_LEFT:
+      angle -= 0.05f;
+      lx = sin(angle);
+      lz = -cos(angle);
+      break;
+    case GLUT_KEY_RIGHT:
+      angle += 0.05f;
+      lx = sin(angle);
+      lz = -cos(angle);
+      break;
+    case GLUT_KEY_UP:
+      x += lx * fraction;
+      z += lz * fraction;
+      break;
+    case GLUT_KEY_DOWN:
+      x -= lx * fraction;
+      z -= lz * fraction;
+      break;
+  }
+}
+
+int main(int argc, char **argv) {
+  // init GLUT and create window
+
   glutInit(&argc, argv);
-  glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
+  glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
+  glutInitWindowPosition(100, 100);
+  glutInitWindowSize(320, 320);
+  glutCreateWindow("GLUT Tutorial");
 
-  // Position window at (80,80)-(480,380) and give it a title.
-  glutInitWindowPosition(80, 80);
-  glutInitWindowSize(400, 300);
-  glutCreateWindow("A Simple Triangle");
+  // register callbacks
+  glutDisplayFunc(renderScene);
+  glutReshapeFunc(changeSize);
+  glutIdleFunc(renderScene);
+  glutKeyboardFunc(processNormalKeys);
+  glutSpecialFunc(processSpecialKeys);
 
-  // Tell GLUT that whenever the main window needs to be repainted that it
-  // should call the function display().
-  glutDisplayFunc(display);
+  // OpenGL init
+  glEnable(GL_DEPTH_TEST);
 
-  // Tell GLUT to start reading and processing events.  This function
-  // never returns; the program only exits when the user closes the main
-  // window or kills the process.
+  // enter GLUT event processing cycle
   glutMainLoop();
+
+  return 1;
 }
