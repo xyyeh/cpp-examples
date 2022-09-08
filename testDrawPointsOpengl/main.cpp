@@ -37,8 +37,8 @@ void renderScene(void) {
   // Set the camera
   gluLookAt(x, 1.0f, z, x + lx, 1.0f, z + lz, 0.0f, 1.0f, 0.0f);
 
-  // Draw ground
-  glColor4f(0.9f, 0.9f, 0.9f, 0.1f);
+  // Draw ground plane
+  glColor3f(0.9f, 0.9f, 0.9f);
   glBegin(GL_QUADS);
   glVertex3f(-100.0f, 0.0f, -100.0f);
   glVertex3f(-100.0f, 0.0f, 100.0f);
