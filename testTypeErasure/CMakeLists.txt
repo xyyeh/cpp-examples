@@ -1,7 +1,7 @@
 # use cmake 3 which supports targets
 cmake_minimum_required(VERSION 3.1.3)
 
-project(testNlohmannJson)
+project(testTypeErasure)
 SET(CMAKE_CXX_FLAGS "-O3")
 
 # create executable from source
