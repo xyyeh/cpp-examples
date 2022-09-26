@@ -8,11 +8,6 @@ const std::string xmlPath = "../example.xml";
 
 namespace pt = boost::property_tree;
 
-struct Receipient {
-  std::string m_name;
-  std::string m_address;
-};
-
 int main() {
   pt::ptree propertyTree;
   pt::read_xml(xmlPath, propertyTree);
