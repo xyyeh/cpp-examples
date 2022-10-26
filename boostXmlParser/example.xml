@@ -1,15 +1,18 @@
 <?xml version="1.0"?>
-<!-- <purchaseOrder>
-    <Node Type="XET" Reference="10110232">
-        <Test TestType="123" />
-    </Node>
-</purchaseOrder> -->
+<robot name="A02L-M1">
+    <link name="base_link">
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://description/meshes/visual/base_link.stl" />
+            </geometry>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://description/meshes/collision/base_link.stl" />
+            </geometry>
+        </collision>
+    </link>
 
-<link name="base_link">
-    <visual>
-        <origin xyz="0 0 0" rpy="0 0 0" />
-        <geometry>
-            <mesh filename="package://description/meshes/base_link.stl" />
-        </geometry>
-    </visual>
-</link>
+</robot>
