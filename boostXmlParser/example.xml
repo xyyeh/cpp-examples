@@ -4,15 +4,29 @@
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
-                <mesh filename="package://description/meshes/visual/base_link.stl" />
+                <mesh filename="package://description/meshes/visual/base_link.obj" />
             </geometry>
         </visual>
         <collision>
             <origin xyz="0 0 0" rpy="0 0 0" />
             <geometry>
-                <mesh filename="package://description/meshes/collision/base_link.stl" />
+                <mesh filename="package://description/meshes/collision/base_link.obj" />
             </geometry>
         </collision>
     </link>
 
+    <link name="link1">
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://description/meshes/visual/link1.obj" />
+            </geometry>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+                <mesh filename="package://description/meshes/collision/link1.obj" />
+            </geometry>
+        </collision>
+    </link>
 </robot>

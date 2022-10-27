@@ -3,6 +3,7 @@
 #include <boost/property_tree/xml_parser.hpp>
 #include <iostream>
 #include <set>
+#include <sstream>
 #include <streambuf>
 
 const std::string xmlPath = "../example.xml";
@@ -47,32 +48,47 @@ int main() {
   std::stringstream buffer;
   buffer << fs.rdbuf();
 
+  std::string str = buffer.str();
+
+  std::stringstream input(str);
+
   pt::ptree propertyTree;
-  pt::read_xml(buffer, propertyTree, pt::xml_parser::trim_whitespace);
+  pt::read_xml(input, propertyTree, pt::xml_parser::trim_whitespace);
   int i = 0;
 
-  // read
-  std::cout << propertyTree.get<std::string>("robot.<xmlattr>.name") << std::endl;
-  BOOST_FOREACH (pt::ptree::value_type &v, propertyTree.get_child("robot.link")) {
-    std::cout << "----------------- [i = " << i++ << "]-----------------" << std::endl;
+  if (propertyTree.get_child("robot").count("group")) {
+    std::cout << "srdf file, exit!" << std::endl;
+    return -1;
+  }
 
-    std::cout << "v.first = " << v.first << std::endl;
+  // edit
+  std::string dirPrefix = "path";
+  propertyTree.add("robot.<xmlattr>.version", "2");
+  BOOST_FOREACH (pt::ptree::value_type &v, propertyTree.get_child("robot")) {
     if (v.first == "<xmlattr>") {
       std::cout << v.second.get<std::string>("name") << std::endl;
     } else {
-      auto origin = v.second.get_child("origin");
-      std::cout << origin.get<std::string>("<xmlattr>.xyz") << std::endl;
-      std::cout << origin.get<std::string>("<xmlattr>.rpy") << std::endl;
+      auto &visualMesh = v.second.get_child("visual.geometry.mesh");
+      auto visualPath = visualMesh.get<std::string>("<xmlattr>.filename");
+      visualPath.erase(0, strlen("package://description"));
+      visualMesh.put("<xmlattr>.filename", dirPrefix + visualPath);
 
-      auto geom = v.second.get_child("geometry.mesh");
-      std::cout << geom.get<std::string>("<xmlattr>.filename") << std::endl;
+      auto &collision = v.second.get_child("collision.geometry");
+      auto collisionPath = collision.get<std::string>("mesh.<xmlattr>.filename");
+      collisionPath.erase(0, strlen("package://description"));
+      collisionPath.replace(collisionPath.end() - strlen("obj"), collisionPath.end(), "stl");
+      collision.erase("mesh");
+      collision.add("convex_mesh.<xmlattr>.filename", dirPrefix + collisionPath);
     }
   }
 
   // write
-  propertyTree.add("robot.<xmlattr>.version", "2");
+  std::string xml;
+  std::ostringstream oss;
+  pt::write_xml(oss, propertyTree, pt::xml_writer_make_settings<std::string>(' ', 4));
+  xml = oss.str();
+  std::cout << "------------------------\n" << xml << std::endl;
 
   pt::write_xml("temp.xml", propertyTree, std::locale(), pt::xml_writer_make_settings<std::string>(' ', 4));
-
-  printTree(propertyTree, 3);
+  // printTree(propertyTree, 3);
 }
