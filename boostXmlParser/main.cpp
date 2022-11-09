@@ -6,7 +6,10 @@
 #include <sstream>
 #include <streambuf>
 
-const std::string xmlPath = "../example.xml";
+// const std::string xmlPath = "../test.srdf";
+const std::string xmlPath = "../test.urdf";
+
+constexpr char k_prefix[] = "12345";
 
 namespace pt = boost::property_tree;
 
@@ -47,48 +50,72 @@ int main() {
   std::ifstream fs(xmlPath);
   std::stringstream buffer;
   buffer << fs.rdbuf();
-
   std::string str = buffer.str();
-
   std::stringstream input(str);
 
   pt::ptree propertyTree;
   pt::read_xml(input, propertyTree, pt::xml_parser::trim_whitespace);
   int i = 0;
 
-  if (propertyTree.get_child("robot").count("group")) {
-    std::cout << "srdf file, exit!" << std::endl;
-    return -1;
-  }
+  std::cout << "Begin parsing" << std::endl;
 
-  // edit
-  std::string dirPrefix = "path";
-  propertyTree.add("robot.<xmlattr>.version", "2");
-  BOOST_FOREACH (pt::ptree::value_type &v, propertyTree.get_child("robot")) {
-    if (v.first == "<xmlattr>") {
-      std::cout << v.second.get<std::string>("name") << std::endl;
-    } else {
-      auto &visualMesh = v.second.get_child("visual.geometry.mesh");
-      auto visualPath = visualMesh.get<std::string>("<xmlattr>.filename");
-      visualPath.erase(0, strlen("package://description"));
-      visualMesh.put("<xmlattr>.filename", dirPrefix + visualPath);
+  std::string oldPrefix = "package://description";
+  std::string newPrefix = "path";
 
-      auto &collision = v.second.get_child("collision.geometry");
-      auto collisionPath = collision.get<std::string>("mesh.<xmlattr>.filename");
-      collisionPath.erase(0, strlen("package://description"));
-      collisionPath.replace(collisionPath.end() - strlen("obj"), collisionPath.end(), "stl");
-      collision.erase("mesh");
-      collision.add("convex_mesh.<xmlattr>.filename", dirPrefix + collisionPath);
+  auto updatePrefixSingle = [=](boost::optional<pt::ptree &> t, const std::string &oldPrefix,
+                                const std::string &newPrefix) {
+    if (t) {
+      auto path = t->get<std::string>("<xmlattr>.filename");
+      path.erase(0, oldPrefix.size());
+      t->put("<xmlattr>.filename", newPrefix + path);
+    }
+  };
+
+  boost::optional<pt::ptree &> group = propertyTree.get_child_optional("robot.group");
+
+  if (group) {
+    std::cout << "srdf" << std::endl;
+
+    updatePrefixSingle(propertyTree.get_child_optional("robot.contact_managers_plugin_config"), oldPrefix, newPrefix);
+    updatePrefixSingle(propertyTree.get_child_optional("robot.kinematics_plugin_config"), oldPrefix, newPrefix);
+
+  } else {
+    std::cout << "urdf" << std::endl;
+
+    // edit
+    propertyTree.add("robot.<xmlattr>.version", "2");
+    BOOST_FOREACH (pt::ptree::value_type &v, propertyTree.get_child("robot")) {
+      updatePrefixSingle(v.second.get_child_optional("visual.geometry.mesh"), oldPrefix, newPrefix);
+
+      boost::optional<pt::ptree &> co = v.second.get_child_optional("collision.geometry");
+      if (co) {
+        auto path = co->get<std::string>("mesh.<xmlattr>.filename");
+        path.erase(0, oldPrefix.size());
+
+        std::string toReplace = "obj";
+        size_t pos = path.find(toReplace);
+        if (pos != std::string::npos) {
+          path.replace(pos, toReplace.size(), "stl");
+        }
+        co->erase("mesh");
+        co->add("convex_mesh.<xmlattr>.filename", newPrefix + path);
+      }
     }
   }
+
+  // settings
+  auto settings = pt::xml_writer_make_settings<std::string>(' ', 4);
 
   // write
   std::string xml;
   std::ostringstream oss;
-  pt::write_xml(oss, propertyTree, pt::xml_writer_make_settings<std::string>(' ', 4));
+  pt::write_xml(oss, propertyTree, settings);
   xml = oss.str();
   std::cout << "------------------------\n" << xml << std::endl;
 
-  pt::write_xml("temp.xml", propertyTree, std::locale(), pt::xml_writer_make_settings<std::string>(' ', 4));
+  pt::write_xml("output.xml", propertyTree, std::locale(), settings);
   // printTree(propertyTree, 3);
+
+  // test
+  std::cout << strlen(k_prefix) << std::endl;
 }

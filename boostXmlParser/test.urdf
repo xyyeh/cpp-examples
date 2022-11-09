@@ -1,5 +1,13 @@
 <?xml version="1.0"?>
-<robot name="A02L-M1">
+<robot name="robot">
+    <joint name="joint1" type="revolute">
+        <parent link="base_link" />
+        <child link="link1" />
+        <origin rpy="0.0 0.0 -3.141592653589793" xyz="0.0 0.0 0.155" />
+        <axis xyz="0 0 1" />
+        <limit effort="123" lower="-2.7925" upper="2.7925" velocity="2.0944" />
+        <safety_controller k_position="100.0" k_velocity="40.0" soft_lower_limit="-2.7663" soft_upper_limit="2.7663" />
+    </joint>
     <link name="base_link">
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0" />
@@ -14,7 +22,6 @@
             </geometry>
         </collision>
     </link>
-
     <link name="link1">
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0" />
