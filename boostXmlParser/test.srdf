@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<robot name="A02L-M1" version="1.0.0">
+<robot name="robot" version="1.0.0">
     <group name="manipulator">
         <chain base_link="base_link" tip_link="flange" />
     </group>
