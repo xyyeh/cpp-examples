@@ -1,7 +1,7 @@
-/*********************************************************************
+/*
  * Software License Agreement (BSD License)
  *
- *  Copyright (c) 2010, Willow Garage, Inc.
+ *  Copyright (c) 2009, Willow Garage, Inc.
  *  All rights reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
@@ -30,43 +30,68 @@
  *  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
  *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  *  POSSIBILITY OF SUCH DAMAGE.
- *********************************************************************/
-#include <ros/duration.h>
-#include <ros/impl/duration.h>
+ */
+
+#ifndef ROSCPP_CALLBACK_QUEUE_INTERFACE_H
+#define ROSCPP_CALLBACK_QUEUE_INTERFACE_H
+
+#include <boost/shared_ptr.hpp>
+
+#include "common.h"
 
 namespace ros {
 
-Duration::Duration(const Rate& rate)
-    : DurationBase<Duration>(rate.expectedCycleTime().sec, rate.expectedCycleTime().nsec) {}
+/**
+ * \brief Abstract interface for items which can be added to a CallbackQueueInterface
+ */
+class CallbackInterface {
+public:
+  /**
+   * \brief Possible results for the call() method
+   */
+  enum CallResult {
+    Success,   ///< Call succeeded
+    TryAgain,  ///< Call not ready, try again later
+    Invalid,   ///< Call no longer valid
+  };
 
-WallDuration::WallDuration(const Rate& rate)
-    : DurationBase<WallDuration>(rate.expectedCycleTime().sec, rate.expectedCycleTime().nsec) {}
+  virtual ~CallbackInterface() {}
 
-void normalizeSecNSecSigned(int64_t& sec, int64_t& nsec) {
-  int64_t nsec_part = nsec % 1000000000L;
-  int64_t sec_part = sec + nsec / 1000000000L;
-  if (nsec_part < 0) {
-    nsec_part += 1000000000L;
-    --sec_part;
-  }
+  /**
+   * \brief Call this callback
+   * \return The result of the call
+   */
+  virtual CallResult call() = 0;
+  /**
+   * \brief Provides the opportunity for specifying that a callback is not ready to be called
+   * before call() actually takes place.
+   */
+  virtual bool ready() { return true; }
+};
+typedef boost::shared_ptr<CallbackInterface> CallbackInterfacePtr;
 
-  if (sec_part < std::numeric_limits<int32_t>::min() || sec_part > std::numeric_limits<int32_t>::max())
-    throw std::runtime_error("Duration is out of dual 32-bit range");
+/**
+ * \brief Abstract interface for a queue used to handle all callbacks within roscpp.
+ *
+ * Allows you to inherit and provide your own implementation that can be used instead of our
+ * default CallbackQueue
+ */
+class CallbackQueueInterface {
+public:
+  virtual ~CallbackQueueInterface() {}
 
-  sec = sec_part;
-  nsec = nsec_part;
-}
+  /**
+   * \brief Add a callback, with an optional owner id.  The owner id can be used to
+   * remove a set of callbacks from this queue.
+   */
+  virtual void addCallback(const CallbackInterfacePtr& callback, uint64_t owner_id = 0) = 0;
 
-void normalizeSecNSecSigned(int32_t& sec, int32_t& nsec) {
-  int64_t sec64 = sec;
-  int64_t nsec64 = nsec;
+  /**
+   * \brief Remove all callbacks associated with an owner id
+   */
+  virtual void removeByID(uint64_t owner_id) = 0;
+};
 
-  normalizeSecNSecSigned(sec64, nsec64);
-
-  sec = (int32_t)sec64;
-  nsec = (int32_t)nsec64;
-}
-
-template class DurationBase<Duration>;
-template class DurationBase<WallDuration>;
 }  // namespace ros
+
+#endif

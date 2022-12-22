@@ -1,6 +1,9 @@
+#include <ros/time.h>
+#include <ros/wall_timer.h>
+
 #include <chrono>
 #include <iostream>
-#include <ros/time.hpp>
+// #include <ros/timer_operations.hpp>
 #include <thread>
 
 int main(int argc, char *argv[]) {
@@ -11,24 +14,22 @@ int main(int argc, char *argv[]) {
   using namespace std::chrono_literals;
 
   auto t1 = ros::Time::now().toNSec();
-  //   std::this_thread::sleep_for(1ms);
-  ros::Duration(0.001).sleep();
+  ros::Duration(0.1).sleep();
   auto t2 = ros::Time::now().toNSec();
+  std::cout << (t2 - t1) * 1e-9 << std::endl;
 
-  std::cout << t2 - t1 << std::endl;
+  ros::WallTime wall_time;
+  std::cout << wall_time.now() << std::endl;
+  ros::WallDuration(0.1).sleep();
+  std::cout << wall_time.now() << std::endl;
 
   ros::WallDuration dt_state_update_;
-
-  /// timer for state updates.
-  // Check if last_state_update_ is true and if so call updateSceneWithCurrentState()
-  // Not safe to access from callback functions.
-  //   ros::WallTimer state_update_timer_;
-
-  /// Last time the state was updated from current_state_monitor_
-  // Only access this from callback functions (and constructor)
-  ros::WallTime last_robot_state_update_wall_time_;
-
-  std::cout << last_robot_state_update_wall_time_.now();
+  dt_state_update_.fromSec(1.0);
+  ros::WallTimer state_update_timer_;
+  state_update_timer_.setPeriod(dt_state_update_);
+  state_update_timer_.start();
+  ros::WallDuration(0.1).sleep();
+  state_update_timer_.stop();
 
   return 0;
 }
