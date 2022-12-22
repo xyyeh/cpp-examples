@@ -8,7 +8,7 @@
  *   * Redistributions in binary form must reproduce the above copyright
  *     notice, this list of conditions and the following disclaimer in the
  *     documentation and/or other materials provided with the distribution.
- *   * Neither the names of Stanford University or Willow Garage, Inc. nor the names of its
+ *   * Neither the names of Willow Garage, Inc. nor the names of its
  *     contributors may be used to endorse or promote products derived from
  *     this software without specific prior written permission.
  *
@@ -25,29 +25,32 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ROSCPP_WALL_TIMER_H
-#define ROSCPP_WALL_TIMER_H
+#ifndef F5E78292_A94E_485A_841A_210C10FF7F50
+#define F5E78292_A94E_485A_841A_210C10FF7F50
+
+#ifndef ROSCPP_TIMER_H
+#define ROSCPP_TIMER_H
 
 #include "common.h"
 #include "forwards.h"
-#include "wall_timer_options.h"
+#include "timer_options.h"
 
 namespace ros {
 
 /**
- * \brief Manages a wall-clock timer callback
+ * \brief Manages a timer callback
  *
- * A WallTimer should always be created through a call to TimerHandle::createWallTimer(), or copied from one
+ * A Timer should always be created through a call to TimerHandle::createTimer(), or copied from one
  * that was. Once all copies of a specific
- * WallTimer go out of scope, the callback associated with that handle will stop
+ * Timer go out of scope, the callback associated with that handle will stop
  * being called.
  */
-class WallTimer {
+class Timer {
 public:
-  WallTimer() {}
-  WallTimer(const WallTimer& rhs);
-  ~WallTimer();
-  WallTimer& operator=(const WallTimer& other) = default;
+  Timer() {}
+  Timer(const Timer& rhs);
+  ~Timer();
+  Timer& operator=(const Timer& other) = default;
 
   /**
    * \brief Start the timer.  Does nothing if the timer is already started.
@@ -68,20 +71,21 @@ public:
    * \brief Set the period of this timer
    * \param reset Whether to reset the timer. If true, timer ignores elapsed time and next cb occurs at now()+period
    */
-  void setPeriod(const WallDuration& period, bool reset = true);
+  void setPeriod(const Duration& period, bool reset = true);
 
   bool hasStarted() const { return impl_ && impl_->hasStarted(); }
   bool isValid() { return impl_ && impl_->isValid(); }
+  bool isValid() const { return impl_ && impl_->isValid(); }
   operator void*() { return isValid() ? (void*)1 : (void*)0; }
 
-  bool operator<(const WallTimer& rhs) { return impl_ < rhs.impl_; }
+  bool operator<(const Timer& rhs) { return impl_ < rhs.impl_; }
 
-  bool operator==(const WallTimer& rhs) { return impl_ == rhs.impl_; }
+  bool operator==(const Timer& rhs) { return impl_ == rhs.impl_; }
 
-  bool operator!=(const WallTimer& rhs) { return impl_ != rhs.impl_; }
+  bool operator!=(const Timer& rhs) { return impl_ != rhs.impl_; }
 
 private:
-  WallTimer(const WallTimerOptions& ops);
+  Timer(const TimerOptions& ops);
 
   class Impl {
   public:
@@ -90,8 +94,9 @@ private:
 
     bool hasStarted() const;
     bool isValid();
+    bool isValid() const;
     bool hasPending();
-    void setPeriod(const WallDuration& period, bool reset = true);
+    void setPeriod(const Duration& period, bool reset = true);
 
     void start();
     void stop();
@@ -99,8 +104,8 @@ private:
     bool started_;
     int32_t timer_handle_;
 
-    WallDuration period_;
-    WallTimerCallback callback_;
+    Duration period_;
+    TimerCallback callback_;
     CallbackQueueInterface* callback_queue_;
     VoidConstWPtr tracked_object_;
     bool has_tracked_object_;
@@ -117,3 +122,5 @@ private:
 }  // namespace ros
 
 #endif
+
+#endif /* F5E78292_A94E_485A_841A_210C10FF7F50 */

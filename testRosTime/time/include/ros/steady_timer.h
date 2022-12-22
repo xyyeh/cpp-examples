@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, Willow Garage, Inc.
+ * Copyright (C) 2017, Felix Ruess, Roboception GmbH
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -25,29 +25,29 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ROSCPP_WALL_TIMER_H
-#define ROSCPP_WALL_TIMER_H
+#ifndef ROSCPP_STEADY_TIMER_H
+#define ROSCPP_STEADY_TIMER_H
 
 #include "common.h"
 #include "forwards.h"
-#include "wall_timer_options.h"
+#include "steady_timer_options.h"
 
 namespace ros {
 
 /**
- * \brief Manages a wall-clock timer callback
+ * \brief Manages a steady-clock timer callback
  *
- * A WallTimer should always be created through a call to TimerHandle::createWallTimer(), or copied from one
+ * A SteadyTimer should always be created through a call to TimerHandle::createSteadyTimer(), or copied from one
  * that was. Once all copies of a specific
- * WallTimer go out of scope, the callback associated with that handle will stop
+ * SteadyTimer go out of scope, the callback associated with that handle will stop
  * being called.
  */
-class WallTimer {
+class SteadyTimer {
 public:
-  WallTimer() {}
-  WallTimer(const WallTimer& rhs);
-  ~WallTimer();
-  WallTimer& operator=(const WallTimer& other) = default;
+  SteadyTimer() {}
+  SteadyTimer(const SteadyTimer& rhs);
+  ~SteadyTimer();
+  SteadyTimer& operator=(const SteadyTimer& other) = default;
 
   /**
    * \brief Start the timer.  Does nothing if the timer is already started.
@@ -74,14 +74,14 @@ public:
   bool isValid() { return impl_ && impl_->isValid(); }
   operator void*() { return isValid() ? (void*)1 : (void*)0; }
 
-  bool operator<(const WallTimer& rhs) { return impl_ < rhs.impl_; }
+  bool operator<(const SteadyTimer& rhs) { return impl_ < rhs.impl_; }
 
-  bool operator==(const WallTimer& rhs) { return impl_ == rhs.impl_; }
+  bool operator==(const SteadyTimer& rhs) { return impl_ == rhs.impl_; }
 
-  bool operator!=(const WallTimer& rhs) { return impl_ != rhs.impl_; }
+  bool operator!=(const SteadyTimer& rhs) { return impl_ != rhs.impl_; }
 
 private:
-  WallTimer(const WallTimerOptions& ops);
+  SteadyTimer(const SteadyTimerOptions& ops);
 
   class Impl {
   public:
@@ -100,7 +100,7 @@ private:
     int32_t timer_handle_;
 
     WallDuration period_;
-    WallTimerCallback callback_;
+    SteadyTimerCallback callback_;
     CallbackQueueInterface* callback_queue_;
     VoidConstWPtr tracked_object_;
     bool has_tracked_object_;

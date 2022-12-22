@@ -10,11 +10,13 @@ add_library(${PROJECT_NAME} STATIC
 
     src/duration.cpp
     src/rate.cpp
-
     src/time.cpp
-    src/wall_timer.cpp
     
-    # src/timer_operations.cpp 
+    src/timer.cpp
+    src/wall_timer.cpp
+    src/steady_timer.cpp
+    
+    src/timer_handle.cpp 
 )
 
 target_include_directories(${PROJECT_NAME}
