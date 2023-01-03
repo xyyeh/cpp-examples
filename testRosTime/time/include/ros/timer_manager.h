@@ -495,12 +495,10 @@ void TimerManager<T, D, E>::threadFunc() {
           printf("Scheduling timer callback for timer [%d] of period [%f], [%f] off expected\n", info->handle,
                  info->period.toSec(), (current - info->next_expected).toSec());
 
-          printf("Define callback\n");
           CallbackInterfacePtr cb(boost::make_shared<TimerQueueCallback>(
               this, info, info->last_expected, info->last_real, info->next_expected, info->last_expired, current));
-          printf("Add callback from %ld\n", (uint64_t)info.get());
           info->callback_queue->addCallback(cb, (uint64_t)info.get());
-          printf("Remove waiting callback\n");
+
           waiting_.pop_front();
 
           if (waiting_.empty()) {
