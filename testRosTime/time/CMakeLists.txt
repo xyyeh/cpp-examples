@@ -17,6 +17,7 @@ add_library(${PROJECT_NAME} STATIC
     src/steady_timer.cpp
     
     src/timer_handle.cpp 
+    src/callback_queue.cpp 
 )
 
 target_include_directories(${PROJECT_NAME}

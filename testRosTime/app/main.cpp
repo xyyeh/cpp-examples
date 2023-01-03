@@ -1,35 +1,54 @@
+#include <ros/callback_queue.h>
 #include <ros/time.h>
+#include <ros/timer_handle.h>
 #include <ros/wall_timer.h>
 
 #include <chrono>
 #include <iostream>
-// #include <ros/timer_operations.hpp>
 #include <thread>
 
-int main(int argc, char *argv[]) {
-  ros::Time::init();
-  ros::Time a_little_after_the_beginning(0.001);
-  ros::Duration five_seconds(5.0);
+class WallTimerUser {
+private:
+  void initialize() {
+    update_timer_ = nh_->createWallTimer(ros::WallDuration(1.0), &WallTimerUser::updateCallback, this, true);
+  };
 
-  using namespace std::chrono_literals;
+  void updateCallback(const ros::WallTimerEvent& /*event*/) { std::cout << __func__ << " callback" << std::endl; }
 
-  auto t1 = ros::Time::now().toNSec();
-  ros::Duration(0.1).sleep();
-  auto t2 = ros::Time::now().toNSec();
-  std::cout << (t2 - t1) * 1e-9 << std::endl;
+public:
+  WallTimerUser(std::shared_ptr<ros::TimerHandle> nh) {
+    nh_ = std::move(nh);
+    initialize();
+  };
+  ~WallTimerUser(){};
 
-  ros::WallTime wall_time;
-  std::cout << wall_time.now() << std::endl;
-  ros::WallDuration(0.1).sleep();
-  std::cout << wall_time.now() << std::endl;
+  ros::WallTimer update_timer_;
 
-  ros::WallDuration dt_state_update_;
-  dt_state_update_.fromSec(1.0);
-  ros::WallTimer state_update_timer_;
-  state_update_timer_.setPeriod(dt_state_update_);
-  state_update_timer_.start();
-  ros::WallDuration(0.1).sleep();
-  state_update_timer_.stop();
+  std::shared_ptr<ros::TimerHandle> nh_;
+};
+
+int main(int argc, char* argv[]) {
+  // create callback queue;
+  ros::CallbackQueue callback_queue;
+
+  // create global timer handler
+  auto nh = std::make_shared<ros::TimerHandle>();
+  nh->setCallbackQueue(&callback_queue);
+  WallTimerUser wt(nh);
+
+  // use another thread to process callbacks
+  std::thread t([&callback_queue]() {
+    if (!callback_queue.isEnabled()) {
+      std::cout << "not enabled" << std::endl;
+    } else {
+      ros::WallDuration d(0.001f);
+      for (int32_t i = 0; i < 2000; ++i) {
+        callback_queue.callAvailable(ros::WallDuration());
+        d.sleep();
+      }
+    }
+  });
+  t.join();
 
   return 0;
 }

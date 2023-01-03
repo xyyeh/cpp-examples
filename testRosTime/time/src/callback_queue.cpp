@@ -34,6 +34,7 @@
 
 #include "ros/callback_queue.h"
 
+#include <boost/make_shared.hpp>
 #include <boost/scope_exit.hpp>
 
 namespace ros {
@@ -314,8 +315,10 @@ CallbackQueue::CallOneResult CallbackQueue::callOneCB(TLS* tls) {
     return Empty;
   }
 
-  ROS_ASSERT(!tls->callbacks.empty());
-  ROS_ASSERT(tls->cb_it != tls->callbacks.end());
+  // ROS_ASSERT(!tls->callbacks.empty());
+  // ROS_ASSERT(tls->cb_it != tls->callbacks.end());
+  assert(!tls->callbacks.empty());
+  assert(tls->cb_it != tls->callbacks.end());
 
   CallbackInfo info = *tls->cb_it;
   CallbackInterfacePtr& cb = info.callback;

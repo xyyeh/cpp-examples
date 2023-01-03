@@ -11,8 +11,8 @@ namespace ros {
 
 class TimerHandle {
 public:
-  TimerHandle(/* args */) = delete;
-  ~TimerHandle() = delete;
+  TimerHandle(/* args */) = default;
+  ~TimerHandle() = default;
 
   //////////////////////////////////////////////////////////////////////////////////////////////////////////////
   // Versions of createTimer()
@@ -274,6 +274,16 @@ public:
    * \param ops The options to use when creating the timer
    */
   SteadyTimer createSteadyTimer(SteadyTimerOptions& ops) const;
+
+  /**
+   * \brief Set the default callback queue to be used by this NodeHandle.
+   *
+   * Setting this will cause any callbacks from
+   * advertisements/subscriptions/services/etc. to happen through the
+   * use of the specified queue.  NULL (the default) causes the global
+   * queue (serviced by ros::spin() and ros::spinOnce()) to be used.
+   */
+  void setCallbackQueue(CallbackQueueInterface* queue);
 
 private:
   CallbackQueueInterface* callback_queue_;

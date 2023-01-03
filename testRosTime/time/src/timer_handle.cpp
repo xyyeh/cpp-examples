@@ -41,10 +41,13 @@ WallTimer TimerHandle::createWallTimer(WallDuration period, const WallTimerCallb
 WallTimer TimerHandle::createWallTimer(WallTimerOptions& ops) const {
   if (ops.callback_queue == 0) {
     if (callback_queue_) {
+      std::cout << __func__ << " - Local queue used" << std::endl;
       ops.callback_queue = callback_queue_;
     } else {
       std::cout << "TODO: Global queue not available" << std::endl;
     }
+  } else {
+    std::cout << __func__ << " - Callback queue is empty" << std::endl;
   }
 
   WallTimer timer(ops);
@@ -75,5 +78,7 @@ SteadyTimer TimerHandle::createSteadyTimer(SteadyTimerOptions& ops) const {
   if (ops.autostart) timer.start();
   return timer;
 }
+
+void TimerHandle::setCallbackQueue(CallbackQueueInterface* queue) { callback_queue_ = queue; }
 
 }  // namespace ros

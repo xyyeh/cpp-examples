@@ -59,7 +59,7 @@ public:
 
 template <class T, class D, class E>
 class TimerManager {
-private:
+public:
   struct TimerInfo {
     int32_t handle;
     D period;
@@ -462,7 +462,7 @@ void TimerManager<T, D, E>::threadFunc() {
 
     // detect time jumping backwards
     if (T::now() < current) {
-      // ROSCPP_LOG_DEBUG("Time jumped backward, resetting timers");
+      printf("Time jumped backward, resetting timers");
 
       current = T::now();
 
@@ -492,12 +492,15 @@ void TimerManager<T, D, E>::threadFunc() {
         while (!waiting_.empty() && info && info->next_expected <= current) {
           current = T::now();
 
-          // ROS_DEBUG("Scheduling timer callback for timer [%d] of period [%f], [%f] off expected", info->handle,
-          // info->period.toSec(), (current - info->next_expected).toSec());
+          printf("Scheduling timer callback for timer [%d] of period [%f], [%f] off expected\n", info->handle,
+                 info->period.toSec(), (current - info->next_expected).toSec());
+
+          printf("Define callback\n");
           CallbackInterfacePtr cb(boost::make_shared<TimerQueueCallback>(
               this, info, info->last_expected, info->last_real, info->next_expected, info->last_expired, current));
+          printf("Add callback from %ld\n", (uint64_t)info.get());
           info->callback_queue->addCallback(cb, (uint64_t)info.get());
-
+          printf("Remove waiting callback\n");
           waiting_.pop_front();
 
           if (waiting_.empty()) {
