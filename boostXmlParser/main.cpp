@@ -9,8 +9,6 @@
 // const std::string xmlPath = "../test.srdf";
 const std::string xmlPath = "../test.urdf";
 
-constexpr char k_prefix[] = "12345";
-
 namespace pt = boost::property_tree;
 
 std::string indent(int level) {
@@ -111,11 +109,8 @@ int main() {
   std::ostringstream oss;
   pt::write_xml(oss, propertyTree, settings);
   xml = oss.str();
-  std::cout << "------------------------\n" << xml << std::endl;
+  // std::cout << "------------------------\n" << xml << std::endl;
 
   pt::write_xml("output.xml", propertyTree, std::locale(), settings);
   // printTree(propertyTree, 3);
-
-  // test
-  std::cout << strlen(k_prefix) << std::endl;
 }
